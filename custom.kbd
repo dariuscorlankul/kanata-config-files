@@ -1,0 +1,145 @@
+;; ==============================================================================
+;; 1. CONFIGURATION
+;; ==============================================================================
+(defcfg
+  ;; This enables processing of keys even if Kanata doesn't explicitly map them.
+  ;; It's safe to leave this as-is for a basic setup.
+  process-unmapped-keys yes
+)
+
+;; ==============================================================================
+;; 2. SOURCE KEYS (The physical keys on your laptop)
+;; ==============================================================================
+;; This tells Kanata what physical keys it is allowed to intercept. 
+;; If a key isn't in this list, Kanata will just ignore it.
+(defsrc
+  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+  esc  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft up
+  lctl lmet lalt           spc            ralt left down rght
+)
+
+(defalias
+;; Media Controls
+  mpp  pp       ;; Play/Pause
+  mps  prev     ;; Previous Song
+  mns  next     ;; Next Song
+  
+  ;; Volume & Brightness
+  v+   volu     
+  v-   vold     
+  v0   mute     
+  b+   brup     
+  b-   brdn     
+  
+  ;; System Clipboard Shortcuts
+  scpy C-S-c
+  spst C-S-v
+  
+  ;; Extend Layer Nav
+  bk   A-left   
+  fw   A-right  
+  fnd  C-f      
+  udo  C-z      
+  cut  C-x      
+  cpy  C-c      
+  pst  C-v      
+
+  ;; Sticky Modifiers (1.5s timeout)
+  ls_s  (one-shot 1500 lsft)
+  lc_s  (one-shot 1500 lctl)
+  la_s  (one-shot 1500 lalt)
+  ra_s  (one-shot 1500 ralt)
+  lm_s  (one-shot 1500 lmet)
+  
+  ;; Multi-Sticky Modifiers
+
+  ;; Layer Switches & Toggles
+  ext    (layer-toggle extend)
+  fun    (layer-toggle function)
+  sym    (layer-toggle symbols)
+  num    (layer-toggle numbers)
+  l_qw   (layer-switch querty-sp)
+  l_base (layer-switch base)
+  )
+
+;; ==============================================================================
+;; 4. LAYERS (What the keys actually do)
+;; ==============================================================================
+;; This is your base layer. Right now, it maps 1:1 with your physical keys, 
+;; except I've replaced the CapsLock key with our custom @cap alias.
+(deflayer base
+  XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   @l_qw
+  ;;   |--------- LEFT HAND ---------|      |-------- RIGHT HAND --------|
+  XX   XX   q    w    f    p    b    j    l    u    y    '    XX   XX
+  XX   a    r    s    t    g    XX   m    n    e    i    o    XX   XX
+  XX   z    x    c    d    v    XX   k    h    ,    .    /    XX
+  
+  ;;                        THUMBS
+  ;;             [sym] [spc]                 [lsft] [ext]
+  XX   XX   @sym spc  XX   XX   XX   lsft @ext XX   XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   XX
+)
+
+(deflayer querty-sp
+  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  @l_base
+  esc  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft up
+  lctl lmet lalt spc  ralt left down rght
+)
+
+(deflayer extend
+  XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
+  ;;   |--------- LEFT HAND ---------|      |-------- RIGHT HAND --------|
+  XX   XX   esc  @bk  @fnd @fw  ins  home pgdn pgup end  caps XX   XX
+  XX   @la_s @lm_s @ls_s @lc_s @ra_s XX lft down up  rght del  XX   XX
+  XX   @udo @cut @cpy lmet @pst XX   ret  bspc tab  menu prtsc XX
+  
+  ;;                        THUMBS
+  ;;             [fun] [ret]                 [_]    [_]
+  XX   XX   @fun ret  XX   XX   XX   _    _    XX   XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   XX
+)
+
+(deflayer function
+  XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
+  ;;   |--------- LEFT HAND ---------|      |-------- RIGHT HAND --------|
+  XX   XX   XX @mps @mpp @mns @b+  f12  f7   f8   f9   slck XX   XX
+  XX   @la_s @lm_s @ls_s @lc_s @b- XX f11 f4   f5   f6   @l_base XX XX
+  XX   @v0  @v-  @scpy @v+  @spst XX f10  f1   f2   f3   @l_qw XX
+  
+  ;;                        THUMBS
+  ;;             [_]   [_]                   [ret]  [_]
+  XX   XX   _    _    XX   XX   XX   ret  _    XX   XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   XX
+)
+
+(deflayer symbols
+  XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
+  ;;   |--------- LEFT HAND ---------|      |-------- RIGHT HAND --------|
+  XX   XX   S-1  S-2  S-3  S-4  S-5  =    grv  S-;  ;    S-=  XX   XX
+  XX   @la_s @lm_s @ls_s @lc_s S-6 XX  S-8  S-9  S-[  [    -    XX   XX
+  XX   XX   XX   \    S-\  S-7  XX   S-grv S-0  S-]  ]    S--  XX
+  
+  ;;                        THUMBS
+  ;;             [_]   [_]                   [num]  [fun]
+  XX   XX   _    _    XX   XX   XX   @num @fun XX   XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   XX
+)
+
+(deflayer numbers
+  XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
+  ;;   |--------- LEFT HAND ---------|      |-------- RIGHT HAND --------|
+  XX   XX   nlck =    S-8  0    XX   XX   7    8    9    +    XX   XX
+  XX   @la_s @lm_s @ls_s @lc_s @ra_s XX   XX   4    5    6    -    XX  XX 
+  XX   XX   menu tab  bspc ret  XX   XX   1    2    3    /    XX   
+  
+  ;;                        THUMBS
+  ;;             [_]   [_]                   [_]    [_]
+  XX   XX   _    _    XX   XX   XX   _    _    XX   XX   XX   XX
+  XX   XX   XX   XX   XX   XX   XX   XX
+)
